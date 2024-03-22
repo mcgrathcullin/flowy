@@ -15,9 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let startX, startY;
     let transformX = 0, transformY = 0, scale = 1;
 
-import { parseInput } from './parseinput.js';
-
-document.addEventListener('DOMContentLoaded', function() {
     function renderFlowchart(input) {
         const steps = input.split('\n');
         const mermaidDefinition = parseInput(input);
@@ -52,8 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 bindFunctions(svg);
             }
         });
-
-});
+    }
 
     function handleMouseDown(event) {
         isPanning = true;
@@ -104,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
             "Block: Boxes and pallets are labeled\n" +
             "Block: Boxes and pallets are counted. Pictures are taken.\n" +
             "Block: Power on and check status\n" +
-            "Note: Test" +
+            "Note: Test\n" +
             "Tree: Status\n" +
             "Label: Real bad\n" +
             "1: Scrap for parts\n" +
