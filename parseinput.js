@@ -38,11 +38,12 @@ export function parseInput(input) {
                     const optionNodeId = optionNodes[currentOption];
                     mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")\n`;
                     lastNodeId = currentNodeId;
+                    nodeId++;
                 } else {
                     mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
                     lastNodeId = currentNodeId;
+                    nodeId++;
                 }
-                nodeId++;
                 break;
             case 'tree':
                 decisionNodeId = currentNodeId;
@@ -54,13 +55,6 @@ export function parseInput(input) {
                 break;
             case 'label':
                 lastLabel = text;
-                if (inDecisionTree && currentOption) {
-                    const optionNodeId = optionNodes[currentOption];
-                    const labelNodeId = `N${nodeId}`;
-                    mermaidCode += `${optionNodeId} -->|"${text}"| ${labelNodeId}\n`;
-                    lastNodeId = labelNodeId;
-                    nodeId++;
-                }
                 break;
             default:
                 if (!isNaN(parseInt(type))) {
