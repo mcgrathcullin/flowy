@@ -5,32 +5,35 @@ let transformX = 0;
 let transformY = 0;
 let scale = 1;
 
-export function handleMouseDown(e) {
-    if (e.button === 0) { // Check if the left mouse button is pressed
+export function handleTouchStart(e) {
+    if (e.touches.length === 2) {
         isPanning = true;
-        startX = e.clientX - transformX;
-        startY = e.clientY - transformY;
+        startX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - transformX;
+        startY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - transformY;
     }
 }
 
-export function handleMouseMove(e) {
-    if (!isPanning) return;
-    transformX = e.clientX - startX;
-    transformY = e.clientY - startY;
+export function handleTouchMove(e) {
+    if (!isPanning || e.touches.length !== 2) return;
+    const currentX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    const currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    transformX = currentX - startX;
+    transformY = currentY - startY;
     applyTransform();
 }
 
-export function handleMouseUp() {
+export function handleTouchEnd() {
     isPanning = false;
 }
 
 export function handlePinchZoom(e) {
-    if (e.ctrlKey || e.metaKey) {
-        return; // Ignore pinch-to-zoom if the Ctrl or Command key is pressed
-    }
+    if (e.touches.length !== 2) return;
     e.preventDefault();
-    const delta = e.deltaY * -0.01;
-    const newScale = scale * Math.pow(1.1, delta);
+    const distance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+    );
+    const newScale = scale * (distance / e.scale);
     scale = Math.max(0.5, Math.min(5, newScale));
     applyTransform();
 }
