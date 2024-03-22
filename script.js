@@ -12,6 +12,19 @@ document.addEventListener('DOMContentLoaded', function() {
     canvasContainer.classList.add('canvas-container');
     flowchartOutput.appendChild(canvasContainer);
 
+    // Add event listeners to the flowchartOutput element
+    flowchartOutput.addEventListener('touchstart', function(event) {
+        console.log('Flowchart output touch start');
+    });
+
+    flowchartOutput.addEventListener('touchmove', function(event) {
+        console.log('Flowchart output touch move');
+    });
+
+    flowchartOutput.addEventListener('touchend', function(event) {
+        console.log('Flowchart output touch end');
+    });
+
     function renderFlowchart(input) {
         const mermaidDefinition = parseInput(input);
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
