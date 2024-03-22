@@ -12,7 +12,6 @@ export function parseInput(input) {
     for (const line of steps) {
         const [type, text] = line.split(':').map(s => s.trim());
         const currentNodeId = `N${nodeId}`;
-        let note = '';
 
         switch (type.toLowerCase()) {
             case 'start':
@@ -49,11 +48,6 @@ export function parseInput(input) {
             case 'label':
                 console.log(`Setting last label to "${text}"`);
                 lastLabel = text;
-                break;
-            case 'note':
-                note = `:::note ${text}`;
-                console.log(`Adding note "${text}" to node ${lastNodeId}`);
-                mermaidCode += `${lastNodeId}${note}\n`;
                 break;
             default:
                 if (!isNaN(parseInt(type))) {
