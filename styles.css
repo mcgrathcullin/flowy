@@ -106,7 +106,7 @@ html, body {
     border-radius: 4px;
 }
 
-.edgeLabel:empty {
+.edgeLabel .label span:empty {
   display: none;
 }
 
