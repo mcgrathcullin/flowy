@@ -1,5 +1,3 @@
-// parseinput.js
-
 export function parseInput(input) {
     let mermaidCode = 'graph TD;\n';
     const steps = input.split('\n');
@@ -10,7 +8,6 @@ export function parseInput(input) {
     const optionNodes = {};
     let inDecisionTree = false;
     let currentOption = '';
-
     const processOption = (option, text) => {
         const optionNodeId = `N${nodeId}`;
         const optionLabel = lastLabel || text;
@@ -20,11 +17,9 @@ export function parseInput(input) {
         lastLabel = '';
         nodeId++;
     };
-
     for (const line of steps) {
         const [type, text] = line.split(':').map(s => s.trim());
         const currentNodeId = `N${nodeId}`;
-
         switch (type.toLowerCase()) {
             case 'start':
                 mermaidCode += `${currentNodeId}[${text}]\n`;
@@ -77,6 +72,5 @@ export function parseInput(input) {
                 break;
         }
     }
-
     return mermaidCode;
 }
