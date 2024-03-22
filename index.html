@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flowy</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="text-input-area">
+    <textarea id="text-input"></textarea>
+    <button id="add-sample-btn" style="margin-top: 20px;">Add sample</button>
+    <button id="center-logs-btn" style="margin-top: 20px;">Center</button>
+  </div>
+  <div id="flowchart-output">
+    <!-- Flowchart will be rendered here -->
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js"></script>
+  <script src="parseinput.js"></script>
+  <script type="module" src="script.js"></script>
+  <script type="module" src="panzoom.js"></script>
+</body>
+</html>
