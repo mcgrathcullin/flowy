@@ -21,53 +21,44 @@ export function parseInput(input) {
                 lastNodeId = currentNodeId;
                 nodeId++;
                 break;
-            case 'block':
+           case 'block':
                 if (inDecisionTree && currentOption) {
                     const optionNodeId = optionNodes[currentOption];
                     console.log(`Connecting option node ${optionNodeId} to block node ${currentNodeId}`);
-                    mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")\n`;
+                    if (lastLabel !== null) {
+                        mermaidCode += `${optionNodeId} -->|${lastLabel}| ${currentNodeId}("${text}")\n`;
+                        lastLabel = null;
+                    } else {
+                        mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")\n`;
+                    }
                     lastNodeId = currentNodeId;
                     nodeId++;
                 } else {
                     console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
-                    mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                    if (lastLabel !== null) {
+                        mermaidCode += `${lastNodeId} -->|${lastLabel}| ${currentNodeId}("${text}")\n`;
+                        lastLabel = null;
+                    } else {
+                        mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                    }
                     lastNodeId = currentNodeId;
                     nodeId++;
                 }
-                lastLabel = '';
                 break;
-              case 'tree':
-                            decisionNodeId = currentNodeId;
-                            console.log(`Adding decision node ${decisionNodeId} with text "${text}"`);
-                            mermaidCode += `${lastNodeId} --> ${currentNodeId}{${text}}\n`;
-                            lastNodeId = currentNodeId;
-                            inDecisionTree = true;
-                            currentOption = '';
-                            lastLabel = null;
-                            nodeId++;
-                            break;
-                        case 'label':
-                            console.log(`Setting last label to "${text}"`);
-                            lastLabel = text;
-                            break;
-                        default:
-                            if (!isNaN(parseInt(type))) {
-                                const optionNodeId = `N${nodeId}`;
-                                optionNodes[type] = optionNodeId;
-                                currentOption = type;
-                                console.log(`Processing option ${type} with text "${text}"`);
-                                if (lastLabel !== null) {
-                                    console.log(`Adding label "${lastLabel}" between decision node ${decisionNodeId} and option node ${optionNodeId}`);
-                                    mermaidCode += `${decisionNodeId} -->|${lastLabel}| ${optionNodeId}("${text}")\n`;
-                                    lastLabel = null;
-                                } else {
-                                    console.log(`Connecting decision node ${decisionNodeId} to option node ${optionNodeId}`);
-                                    mermaidCode += `${decisionNodeId} --> ${optionNodeId}("${text}")\n`;
-                                }
-                                lastNodeId = optionNodeId;
-                                nodeId++;
-                            }
-                            break;
+            case 'tree':
+                decisionNodeId = currentNodeId;
+                console.log(`Adding decision node ${decisionNodeId} with text "${text}"`);
+                if (lastLabel !== null) {
+                    mermaidCode += `${lastNodeId} -->|${lastLabel}| ${currentNodeId}{${text}}\n`;
+                    lastLabel = null;
+                } else {
+                    mermaidCode += `${lastNodeId} --> ${currentNodeId}{${text}}\n`;
+                }
+                lastNodeId = currentNodeId;
+                inDecisionTree = true;
+                currentOption = '';
+                nodeId++;
+                break;
                     }
                 }
 
