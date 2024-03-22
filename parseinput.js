@@ -40,6 +40,7 @@ export function parseInput(input) {
                 nodeId++;
                 break;
             case 'block':
+                lastLabel = ''; // Reset lastLabel here
                 if (inDecisionTree && currentOption) {
                     const optionNodeId = optionNodes[currentOption];
                     console.log(`Connecting option node ${optionNodeId} to block node ${currentNodeId}`);
@@ -66,6 +67,7 @@ export function parseInput(input) {
                 lastNodeId = currentNodeId;
                 inDecisionTree = true;
                 currentOption = '';
+                lastLabel = ''; // Reset lastLabel here
                 nodeId++;
                 break;
             case 'label':
