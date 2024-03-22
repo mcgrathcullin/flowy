@@ -1,4 +1,4 @@
-export function parseInput(input) {
+function parseInput(input) {
     let mermaidCode = 'graph TD;\n';
     const steps = input.split('\n');
     let nodeId = 1;
@@ -47,7 +47,7 @@ export function parseInput(input) {
                 break;
             case 'label':
                 console.log(`Setting last label to "${text}"`);
-                lastLabel = text;
+                lastLabel = text || '';
                 break;
             default:
                 if (!isNaN(parseInt(type))) {
@@ -72,3 +72,5 @@ export function parseInput(input) {
 
     return mermaidCode;
 }
+
+module.exports = { parseInput };
