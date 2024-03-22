@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
             console.log('Mermaid definition passed to mermaid.render:', mermaidDefinition);
             canvasContainer.innerHTML = svgCode;
+            const emptyLabels = canvasContainer.querySelectorAll('.edgeLabel:empty');
+            emptyLabels.forEach(label => label.remove());
             const svg = canvasContainer.querySelector('svg');
             if (svg) {
                 svg.addEventListener('mousedown', handleMouseDown);
