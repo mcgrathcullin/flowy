@@ -36,12 +36,7 @@ export function parseInput(input) {
                     }
                     lastNodeId = currentNodeId;
                 } else {
-                    if (lastLabel) {
-                        mermaidCode += `${lastNodeId} -->|"${lastLabel}"|${currentNodeId}("${text}")\n`;
-                        lastLabel = '';
-                    } else {
-                        mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
-                    }
+                    mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
                     lastNodeId = currentNodeId;
                 }
                 inDecisionTree = false;
@@ -49,9 +44,7 @@ export function parseInput(input) {
                 break;
             case 'tree':
                 decisionNodeId = currentNodeId;
-                const label1 = lastLabel ? `"${lastLabel}"` : '';
-                const label2 = `"${text}"`;
-                mermaidCode += `${lastNodeId} --> ${currentNodeId}\n${currentNodeId}(${label1 ? `[${label1},${label2}]` : `[${label2}]`})\n`;
+                mermaidCode += `${lastNodeId} --> ${currentNodeId}{"${text}"}\n`;
                 lastNodeId = currentNodeId;
                 lastLabel = '';
                 inDecisionTree = true;
