@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
             canvasContainer.innerHTML = svgCode;
             const svg = canvasContainer.querySelector('svg');
-            if (svg) {
-                panzoom(svg, {
+            if (svg && window.panzoom) {
+                window.panzoom(svg, {
                     maxZoom: 5,
                     minZoom: 0.5,
                     zoomDoubleClickSpeed: 1,
