@@ -48,7 +48,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ... (rest of the code remains the same)
+    function handleMouseDown(event) {
+        isPanning = true;
+        startX = event.clientX;
+        startY = event.clientY;
+    }
+
+    function handleMouseMove(event) {
+        if (!isPanning) return;
+        const deltaX = event.clientX - startX;
+        const deltaY = event.clientY - startY;
+        transformX += deltaX;
+        transformY += deltaY;
+        applyTransform();
+        startX = event.clientX;
+        startY = event.clientY;
+    }
+
+    function handleMouseUp() {
+        isPanning = false;
+    }
+
+    function handleWheel(event) {
+        const delta = event.deltaY < 0 ? 1.1 : 0.9;
+        scale *= delta;
+        applyTransform();
+        event.preventDefault();
+    }
+
+    function applyTransform() {
+        canvasContainer.style.transform = `translate(${transformX}px, ${transformY}px) scale(${scale})`;
+    }
+
+    function centerFlowchart() {
+        const containerRect = flowchartOutput.getBoundingClientRect();
+        const canvasRect = canvasContainer.getBoundingClientRect();
+        const scrollLeft = (canvasRect.width - containerRect.width) / 2;
+        const scrollTop = (canvasRect.height - containerRect.height) / 2;
+        flowchartOutput.scrollLeft = scrollLeft;
+        flowchartOutput.scrollTop = scrollTop;
+    }
 
     textInput.addEventListener('input', () => renderFlowchart(textInput.value));
 

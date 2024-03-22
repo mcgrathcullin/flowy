@@ -22,19 +22,10 @@ export function parseInput(input) {
                 nodeId++;
                 break;
             case 'block':
-                if (inDecisionTree && currentOption) {
-                    const optionNodeId = optionNodes[currentOption];
-                    console.log(`Connecting option node ${optionNodeId} to block node ${currentNodeId}`);
-                    mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")\n`;
-                    lastNodeId = currentNodeId;
-                    nodeId++;
-                } else {
-                    console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
-                    mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
-                    lastNodeId = currentNodeId;
-                    nodeId++;
-                }
-                lastLabel = '';
+                console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
+                mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                lastNodeId = currentNodeId;
+                nodeId++;
                 break;
             case 'tree':
                 decisionNodeId = currentNodeId;
