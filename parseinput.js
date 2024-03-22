@@ -26,14 +26,12 @@ export function parseInput(input) {
                     const optionNodeId = optionNodes[currentOption];
                     console.log(`Connecting option node ${optionNodeId} to block node ${currentNodeId}`);
                     mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")\n`;
-                    lastNodeId = currentNodeId;
-                    nodeId++;
                 } else {
                     console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
                     mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
-                    lastNodeId = currentNodeId;
-                    nodeId++;
                 }
+                lastNodeId = currentNodeId;
+                nodeId++;
                 lastLabel = '';
                 break;
             case 'tree':
@@ -49,6 +47,10 @@ export function parseInput(input) {
             case 'label':
                 console.log(`Setting last label to "${text}"`);
                 lastLabel = text || '';
+                break;
+            case 'note':
+                console.log(`Adding note "${text}" after node ${lastNodeId}`);
+                mermaidCode += `Note over ${lastNodeId}: ${text}\n`;
                 break;
             default:
                 if (!isNaN(parseInt(type))) {
