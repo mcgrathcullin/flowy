@@ -2,7 +2,7 @@ import { parseInput } from './parseinput.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     mermaid.initialize({ startOnLoad: false });
-    mermaid.init(); // Add this line to initialize Mermaid
+    mermaid.init();
     const textInput = document.getElementById('text-input');
     const flowchartOutput = document.getElementById('flowchart-output');
     const addSampleBtn = document.getElementById('add-sample-btn');
@@ -11,21 +11,56 @@ document.addEventListener('DOMContentLoaded', function() {
     canvasContainer.classList.add('canvas-container');
     flowchartOutput.appendChild(canvasContainer);
 
+    let isPanning = false;
+    let startX, startY;
+    let transformX = 0, transformY = 0, scale = 1;
+
     function renderFlowchart(input) {
         const mermaidDefinition = parseInput(input);
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
             canvasContainer.innerHTML = svgCode;
             const svg = canvasContainer.querySelector('svg');
-            if (svg && window.panzoom) {
-                window.panzoom(svg, {
-                    maxZoom: 5,
-                    minZoom: 0.5,
-                    zoomDoubleClickSpeed: 1,
-                    smoothScroll: false,
-                });
+            if (svg) {
+                svg.addEventListener('mousedown', handleMouseDown);
+                svg.addEventListener('mousemove', handleMouseMove);
+                svg.addEventListener('mouseup', handleMouseUp);
+                svg.addEventListener('mouseleave', handleMouseUp);
+                svg.addEventListener('wheel', handleWheel);
                 bindFunctions(svg);
             }
         });
+    }
+
+    function handleMouseDown(event) {
+        isPanning = true;
+        startX = event.clientX;
+        startY = event.clientY;
+    }
+
+    function handleMouseMove(event) {
+        if (!isPanning) return;
+        const deltaX = event.clientX - startX;
+        const deltaY = event.clientY - startY;
+        transformX += deltaX;
+        transformY += deltaY;
+        applyTransform();
+        startX = event.clientX;
+        startY = event.clientY;
+    }
+
+    function handleMouseUp() {
+        isPanning = false;
+    }
+
+    function handleWheel(event) {
+        const delta = event.deltaY < 0 ? 1.1 : 0.9;
+        scale *= delta;
+        applyTransform();
+        event.preventDefault();
+    }
+
+    function applyTransform() {
+        canvasContainer.style.transform = `translate(${transformX}px, ${transformY}px) scale(${scale})`;
     }
 
     function centerFlowchart() {
