@@ -29,6 +29,9 @@ export function parseInput(input) {
         const [type, text] = line.split(':').map(s => s.trim());
         const currentNodeId = `N${nodeId}`;
 
+        console.log(`Processing line: ${line}`);
+        console.log(`Current lastLabel: ${lastLabel}`);
+
         switch (type.toLowerCase()) {
             case 'start':
                 console.log(`Adding start node ${currentNodeId} with text "${text}"`);
@@ -76,6 +79,8 @@ export function parseInput(input) {
                 }
                 break;
         }
+
+        console.log(`Updated lastLabel: ${lastLabel}`);
     }
 
     return mermaidCode;
