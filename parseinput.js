@@ -5,7 +5,7 @@ export function parseInput(input) {
     let nodeId = 1;
     let lastNodeId = '';
     let decisionNodeId = '';
-    let lastLabel = '';
+    let lastLabel = null;
     const optionNodes = {};
     let inDecisionTree = false;
     let currentOption = '';
@@ -36,40 +36,40 @@ export function parseInput(input) {
                 }
                 lastLabel = '';
                 break;
-            case 'tree':
-                decisionNodeId = currentNodeId;
-                console.log(`Adding decision node ${decisionNodeId} with text "${text}"`);
-                mermaidCode += `${lastNodeId} --> ${currentNodeId}{${text}}\n`;
-                lastNodeId = currentNodeId;
-                inDecisionTree = true;
-                currentOption = '';
-                lastLabel = '';
-                nodeId++;
-                break;
-            case 'label':
-                console.log(`Setting last label to "${text}"`);
-                lastLabel = text || '';
-                break;
-            default:
-                if (!isNaN(parseInt(type))) {
-                    const optionNodeId = `N${nodeId}`;
-                    optionNodes[type] = optionNodeId;
-                    currentOption = type;
-                    console.log(`Processing option ${type} with text "${text}"`);
-                    if (lastLabel) {
-                        console.log(`Adding label "${lastLabel}" between decision node ${decisionNodeId} and option node ${optionNodeId}`);
-                        mermaidCode += `${decisionNodeId} -->|${lastLabel}| ${optionNodeId}("${text}")\n`;
-                        lastLabel = '';
-                    } else {
-                        console.log(`Connecting decision node ${decisionNodeId} to option node ${optionNodeId}`);
-                        mermaidCode += `${decisionNodeId} --> ${optionNodeId}("${text}")\n`;
+              case 'tree':
+                            decisionNodeId = currentNodeId;
+                            console.log(`Adding decision node ${decisionNodeId} with text "${text}"`);
+                            mermaidCode += `${lastNodeId} --> ${currentNodeId}{${text}}\n`;
+                            lastNodeId = currentNodeId;
+                            inDecisionTree = true;
+                            currentOption = '';
+                            lastLabel = null;
+                            nodeId++;
+                            break;
+                        case 'label':
+                            console.log(`Setting last label to "${text}"`);
+                            lastLabel = text;
+                            break;
+                        default:
+                            if (!isNaN(parseInt(type))) {
+                                const optionNodeId = `N${nodeId}`;
+                                optionNodes[type] = optionNodeId;
+                                currentOption = type;
+                                console.log(`Processing option ${type} with text "${text}"`);
+                                if (lastLabel !== null) {
+                                    console.log(`Adding label "${lastLabel}" between decision node ${decisionNodeId} and option node ${optionNodeId}`);
+                                    mermaidCode += `${decisionNodeId} -->|${lastLabel}| ${optionNodeId}("${text}")\n`;
+                                    lastLabel = null;
+                                } else {
+                                    console.log(`Connecting decision node ${decisionNodeId} to option node ${optionNodeId}`);
+                                    mermaidCode += `${decisionNodeId} --> ${optionNodeId}("${text}")\n`;
+                                }
+                                lastNodeId = optionNodeId;
+                                nodeId++;
+                            }
+                            break;
                     }
-                    lastNodeId = optionNodeId;
-                    nodeId++;
                 }
-                break;
-        }
-    }
 
-    return mermaidCode;
-}
+                return mermaidCode;
+            }
