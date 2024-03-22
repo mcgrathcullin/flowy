@@ -18,8 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
 import { parseInput } from './parseinput.js';
 
 document.addEventListener('DOMContentLoaded', function() {
-    // ... (existing code)
-
     function renderFlowchart(input) {
         const steps = input.split('\n');
         const mermaidDefinition = parseInput(input);
@@ -54,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 bindFunctions(svg);
             }
         });
-    }
 
 });
 
