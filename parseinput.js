@@ -73,5 +73,3 @@ export function parseInput(input) {
 
     return mermaidCode;
 }
-
-module.exports = parseInput;
