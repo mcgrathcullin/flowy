@@ -14,6 +14,13 @@ export function parseInput(input) {
         const [type, text] = line.split(':').map(s => s.trim());
         const currentNodeId = `N${nodeId}`;
 
+        console.log('Processing line:', line);
+        console.log('Type:', type);
+        console.log('Text:', text);
+        console.log('Current node ID:', currentNodeId);
+        console.log('Last node ID:', lastNodeId);
+        console.log('Last label:', lastLabel);
+
         switch (type.toLowerCase()) {
             case 'start':
                 console.log(`Adding start node ${currentNodeId} with text "${text}"`);
@@ -23,7 +30,13 @@ export function parseInput(input) {
                 break;
             case 'block':
                 console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
-                mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                if (lastLabel) {
+                    console.log(`Adding label "${lastLabel}" between nodes ${lastNodeId} and ${currentNodeId}`);
+                    mermaidCode += `${lastNodeId} -->|${lastLabel}| ${currentNodeId}("${text}")\n`;
+                    lastLabel = '';
+                } else {
+                    mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                }
                 lastNodeId = currentNodeId;
                 nodeId++;
                 break;
@@ -60,7 +73,11 @@ export function parseInput(input) {
                 }
                 break;
         }
+
+        console.log('Mermaid code so far:', mermaidCode);
+        console.log('------------------------------------');
     }
 
+    console.log('Final Mermaid code:', mermaidCode);
     return mermaidCode;
 }
