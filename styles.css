@@ -99,11 +99,16 @@ html, body {
 }
 
 .edgeLabel {
-    background-color: #161B22;
+    background-color: transparent;
     color: #C9D1D9;
     font-size: 12px;
     padding: 4px;
     border-radius: 4px;
+}
+
+.edgeLabel rect {
+    fill: transparent;
+    stroke: none;
 }
 
 .edgePath path {
