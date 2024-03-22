@@ -35,11 +35,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         console.log('Mermaid definition after processing "Note" type:', mermaidDefinition);
 
+        // Customize Mermaid configuration to prevent empty labels
+        mermaid.initialize({
+            flowchart: {
+                htmlLabels: false,
+                curve: 'linear',
+                useMaxWidth: true,
+                // Add this callback function to customize the rendering
+                onNodeRender: function(id, element, node) {
+                    if (node.type === 'arrow_point') {
+                        const label = element.querySelector('.edgeLabel');
+                        if (label && label.textContent.trim() === '') {
+                            label.style.display = 'none';
+                        }
+                    }
+                }
+            }
+        });
+
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
             console.log('Mermaid definition passed to mermaid.render:', mermaidDefinition);
             canvasContainer.innerHTML = svgCode;
-            const emptyLabels = canvasContainer.querySelectorAll('.edgeLabel:empty');
-            emptyLabels.forEach(label => label.remove());
             const svg = canvasContainer.querySelector('svg');
             if (svg) {
                 svg.addEventListener('mousedown', handleMouseDown);
