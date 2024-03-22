@@ -36,7 +36,7 @@ export function parseInput(input) {
                 break;
             case 'tree':
                 decisionNodeId = currentNodeId;
-                mermaidCode += `${lastNodeId} --> ${currentNodeId}{"${text}"}\n`;
+                mermaidCode += `${lastNodeId} --> ${currentNodeId}{${text}}\n`;
                 lastNodeId = currentNodeId;
                 inDecisionTree = true;
                 currentOption = '';
