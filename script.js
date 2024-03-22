@@ -1,5 +1,5 @@
 import { parseInput } from './parseinput.js';
-import { initPanZoom } from './panzoom.js';
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 document.addEventListener('DOMContentLoaded', function() {
     mermaid.initialize({ startOnLoad: false });
@@ -12,26 +12,18 @@ document.addEventListener('DOMContentLoaded', function() {
     canvasContainer.classList.add('canvas-container');
     flowchartOutput.appendChild(canvasContainer);
 
-    // Add event listeners to the flowchartOutput element
-    flowchartOutput.addEventListener('touchstart', function(event) {
-        console.log('Flowchart output touch start');
-    });
-
-    flowchartOutput.addEventListener('touchmove', function(event) {
-        console.log('Flowchart output touch move');
-    });
-
-    flowchartOutput.addEventListener('touchend', function(event) {
-        console.log('Flowchart output touch end');
-    });
-
     function renderFlowchart(input) {
         const mermaidDefinition = parseInput(input);
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
             canvasContainer.innerHTML = svgCode;
             const svg = canvasContainer.querySelector('svg');
             if (svg) {
-                initPanZoom(svg);
+                panzoom(svg, {
+                    maxZoom: 5,
+                    minZoom: 0.5,
+                    zoomDoubleClickSpeed: 1,
+                    smoothScroll: false,
+                });
                 bindFunctions(svg);
             }
         });
