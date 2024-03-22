@@ -1,5 +1,4 @@
 import { parseInput } from './parseinput.js';
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 document.addEventListener('DOMContentLoaded', function() {
     mermaid.initialize({ startOnLoad: false });
