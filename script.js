@@ -107,8 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
             "Block: Boxes and pallets are labeled\n" +
             "Block: Boxes and pallets are counted. Pictures are taken.\n" +
             "Block: Power on and check status\n" +
-            "Note:\n" +
-            "Test\n" +
+            "Note: Test" +
             "Tree: Status\n" +
             "Label: Real bad\n" +
             "1: Scrap for parts\n" +
