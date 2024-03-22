@@ -43,7 +43,7 @@ export function parseInput(input) {
                 console.log(`Adding start node ${currentNodeId} with text "${text}"`);
                 mermaidCode += `${currentNodeId}[${text}]\n`;
                 if (lastNote) {
-                    mermaidCode += `${currentNodeId}:::note ${lastNote}\n`;
+                    mermaidCode += `${currentNodeId}:::note ${lastNote}\n\n`;
                     lastNote = '';
                 }
                 lastNodeId = currentNodeId;
@@ -56,20 +56,20 @@ export function parseInput(input) {
                     console.log(`Connecting option node ${optionNodeId} to block node ${currentNodeId}`);
                     mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")\n`;
                     if (lastNote) {
-                        mermaidCode += `${currentNodeId}:::note ${lastNote}\n`;
+                        mermaidCode += `${currentNodeId}:::note ${lastNote}\n\n`;
                         lastNote = '';
                     }
                     lastNodeId = currentNodeId;
                     nodeId++;
                 } else {
                     if (lastNote) {
-                        note = `:::note ${lastNote}`;
+                        note = `:::note ${lastNote}\n\n`;
                         lastNote = '';
                     }
                     console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
                     mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
                     if (note) {
-                        mermaidCode += `${currentNodeId}${note}\n`;
+                        mermaidCode += `${currentNodeId}${note}`;
                     }
                     lastNodeId = currentNodeId;
                     nodeId++;
@@ -80,7 +80,7 @@ export function parseInput(input) {
                 console.log(`Adding decision node ${decisionNodeId} with text "${text}"`);
                 mermaidCode += `${lastNodeId} --> ${currentNodeId}{${text}}\n`;
                 if (lastNote) {
-                    mermaidCode += `${currentNodeId}:::note ${lastNote}\n`;
+                    mermaidCode += `${currentNodeId}:::note ${lastNote}\n\n`;
                     lastNote = '';
                 }
                 lastNodeId = currentNodeId;
