@@ -117,23 +117,6 @@ html, body {
     fill: none;
 }
 
-/* New rule to hide empty label boxes */
-.edgeLabel:empty {
-    display: none;
-}
-
-.node:hover::after {
-    content: attr(note);
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 5px;
-    border-radius: 5px;
-    font-size: 12px;
-    white-space: pre-wrap;
-    z-index: 1;
-}
-
 .tooltip {
     display: none;
     position: absolute;
