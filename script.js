@@ -1,5 +1,5 @@
-import { handleTouchStart, handleTouchMove, handleTouchEnd, handlePinchZoom } from './panzoom.js';
 import { parseInput } from './parseinput.js';
+import { initPanZoom } from './panzoom.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     mermaid.initialize({ startOnLoad: false });
@@ -18,12 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
             canvasContainer.innerHTML = svgCode;
             const svg = canvasContainer.querySelector('svg');
             if (svg) {
-                svg.addEventListener('touchstart', handleTouchStart);
-                svg.addEventListener('touchmove', handleTouchMove);
-                svg.addEventListener('touchend', handleTouchEnd);
-                svg.addEventListener('touchcancel', handleTouchEnd);
-                svg.addEventListener('gesturestart', handlePinchZoom);
-                svg.addEventListener('gesturechange', handlePinchZoom);
+                initPanZoom(svg);
                 bindFunctions(svg);
             }
         });
