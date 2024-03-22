@@ -10,9 +10,8 @@ export function parseInput(input) {
     let currentOption = '';
     const processOption = (option, text) => {
         const optionNodeId = `N${nodeId}`;
-        const optionLabel = lastLabel;
-        if (optionLabel) {
-            mermaidCode += `${decisionNodeId} -->|${optionLabel}| ${optionNodeId}("${text}")\n`;
+        if (lastLabel) {
+            mermaidCode += `${decisionNodeId} -->|${lastLabel}| ${optionNodeId}("${text}")\n`;
             lastLabel = '';
         } else {
             mermaidCode += `${decisionNodeId} --> ${optionNodeId}("${text}")\n`;
@@ -31,21 +30,14 @@ export function parseInput(input) {
                 nodeId++;
                 break;
             case 'block':
-                if (inDecisionTree && currentOption) {
-                    mermaidCode += `${optionNodes[currentOption]} --> ${currentNodeId}("${text}")\n`;
-                    lastNodeId = currentNodeId;
-                } else {
-                    mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
-                    lastNodeId = currentNodeId;
-                }
-                inDecisionTree = false;
+                mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                lastNodeId = currentNodeId;
                 nodeId++;
                 break;
             case 'tree':
                 decisionNodeId = currentNodeId;
                 mermaidCode += `${lastNodeId} --> ${currentNodeId}{"${text}"}\n`;
                 lastNodeId = currentNodeId;
-                lastLabel = '';
                 inDecisionTree = true;
                 currentOption = '';
                 nodeId++;
