@@ -1,42 +1,43 @@
 let transformX = 0;
 let transformY = 0;
 let scale = 1;
-let lastPosX = 0;
-let lastPosY = 0;
+let startX = 0;
+let startY = 0;
 let isPanning = false;
 
 export function initPanZoom(svg) {
-    svg.addEventListener('touchstart', handleTouchStart);
-    svg.addEventListener('touchmove', handleTouchMove);
-    svg.addEventListener('touchend', handleTouchEnd);
+    svg.addEventListener('pointerdown', handlePointerDown);
+    svg.addEventListener('pointermove', handlePointerMove);
+    svg.addEventListener('pointerup', handlePointerUp);
+    svg.addEventListener('pointercancel', handlePointerUp);
 }
 
-function handleTouchStart(event) {
-    if (event.touches.length === 2) {
+function handlePointerDown(event) {
+    if (event.pointerType === 'touch' && event.isPrimary) {
+        startX = event.clientX;
+        startY = event.clientY;
         isPanning = true;
-        lastPosX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
-        lastPosY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
-        event.preventDefault();
+        event.target.setPointerCapture(event.pointerId);
     }
 }
 
-function handleTouchMove(event) {
-    if (isPanning && event.touches.length === 2) {
-        const currentPosX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
-        const currentPosY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
-        const deltaX = currentPosX - lastPosX;
-        const deltaY = currentPosY - lastPosY;
-        lastPosX = currentPosX;
-        lastPosY = currentPosY;
+function handlePointerMove(event) {
+    if (isPanning && event.pointerType === 'touch' && event.isPrimary) {
+        const deltaX = event.clientX - startX;
+        const deltaY = event.clientY - startY;
         transformX += deltaX;
         transformY += deltaY;
         applyTransform(event.target);
-        event.preventDefault();
+        startX = event.clientX;
+        startY = event.clientY;
     }
 }
 
-function handleTouchEnd(event) {
-    isPanning = false;
+function handlePointerUp(event) {
+    if (event.pointerType === 'touch' && event.isPrimary) {
+        isPanning = false;
+        event.target.releasePointerCapture(event.pointerId);
+    }
 }
 
 function applyTransform(svg) {
