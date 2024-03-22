@@ -4,18 +4,8 @@ export function parseInput(input) {
     let nodeId = 1;
     let lastNodeId = '';
     let decisionNodeId = '';
-    let lastLabel = '';
-    const optionNodes = {};
     let inDecisionTree = false;
     let currentOption = '';
-    const processOption = (option, text) => {
-        const optionNodeId = `N${nodeId}`;
-        mermaidCode += `${decisionNodeId}(("${text}")) --> ${optionNodeId}{${lastLabel}}\n`;
-        optionNodes[option] = optionNodeId;
-        currentOption = option;
-        lastLabel = '';
-        nodeId++;
-    };
     for (const line of steps) {
         const [type, text] = line.split(':').map(s => s.trim());
         const currentNodeId = `N${nodeId}`;
@@ -26,16 +16,8 @@ export function parseInput(input) {
                 nodeId++;
                 break;
             case 'block':
-                if (inDecisionTree && currentOption) {
-                    mermaidCode += `${optionNodes[currentOption]} --> ${currentNodeId}("${text}")\n`;
-                    lastNodeId = currentNodeId;
-                } else {
-                    const labelText = lastLabel ? `|${lastLabel}|` : '';
-                    mermaidCode += `${lastNodeId} -->${labelText} ${currentNodeId}("${text}")\n`;
-                    lastNodeId = currentNodeId;
-                    lastLabel = '';
-                }
-                inDecisionTree = false;
+                mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                lastNodeId = currentNodeId;
                 nodeId++;
                 break;
             case 'tree':
@@ -47,11 +29,16 @@ export function parseInput(input) {
                 nodeId++;
                 break;
             case 'label':
-                lastLabel = text;
+                if (inDecisionTree) {
+                    mermaidCode += `${decisionNodeId} --"${text}"--> ${lastNodeId}\n`;
+                }
                 break;
             default:
                 if (!isNaN(parseInt(type))) {
-                    processOption(type, text);
+                    const optionNodeId = `N${nodeId}`;
+                    mermaidCode += `${decisionNodeId} ---> ${optionNodeId}("${text}")\n`;
+                    lastNodeId = optionNodeId;
+                    nodeId++;
                 }
                 break;
         }
