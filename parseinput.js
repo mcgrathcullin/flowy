@@ -17,11 +17,11 @@ export function parseInput(input) {
         nodeId++;
         if (lastLabel) {
             console.log(`Adding label "${lastLabel}" between decision node ${decisionNodeId} and option node ${optionNodeId}`);
-            mermaidCode += `${decisionNodeId} -->|${lastLabel}| ${optionNodeId}("${text}")${note}\n`;
+            mermaidCode += `${decisionNodeId} -->|${lastLabel}| ${optionNodeId}("${text}")${note ? `:::${note}` : ''}\n`;
             lastLabel = '';
         } else {
             console.log(`Connecting decision node ${decisionNodeId} to option node ${optionNodeId}`);
-            mermaidCode += `${decisionNodeId} --> ${optionNodeId}("${text}")${note}\n`;
+            mermaidCode += `${decisionNodeId} --> ${optionNodeId}("${text}")${note ? `:::${note}` : ''}\n`;
         }
         lastNodeId = optionNodeId;
     };
@@ -38,7 +38,7 @@ export function parseInput(input) {
         switch (type.toLowerCase()) {
             case 'start':
                 console.log(`Adding start node ${currentNodeId} with text "${text}"`);
-                mermaidCode += `${currentNodeId}[${text}]${lastNote ? `:::${lastNote}` : ''}\n`;
+                mermaidCode += `${currentNodeId}[${text}]${lastNote ? `:::note ${lastNote}` : ''}\n`;
                 lastNodeId = currentNodeId;
                 lastNote = '';
                 nodeId++;
@@ -48,13 +48,13 @@ export function parseInput(input) {
                 if (inDecisionTree && currentOption) {
                     const optionNodeId = optionNodes[currentOption];
                     console.log(`Connecting option node ${optionNodeId} to block node ${currentNodeId}`);
-                    mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")${lastNote ? `:::${lastNote}` : ''}\n`;
+                    mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")${lastNote ? `:::note ${lastNote}` : ''}\n`;
                     lastNodeId = currentNodeId;
                     lastNote = '';
                     nodeId++;
                 } else {
                     if (lastNote) {
-                        note = `:::${lastNote}`;
+                        note = `:::note ${lastNote}`;
                         lastNote = '';
                     }
                     console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
@@ -66,7 +66,7 @@ export function parseInput(input) {
             case 'tree':
                 decisionNodeId = currentNodeId;
                 console.log(`Adding decision node ${decisionNodeId} with text "${text}"`);
-                mermaidCode += `${lastNodeId} --> ${currentNodeId}{${text}}${lastNote ? `:::${lastNote}` : ''}\n`;
+                mermaidCode += `${lastNodeId} --> ${currentNodeId}{${text}}${lastNote ? `:::note ${lastNote}` : ''}\n`;
                 lastNodeId = currentNodeId;
                 inDecisionTree = true;
                 currentOption = '';
@@ -85,7 +85,7 @@ export function parseInput(input) {
             default:
                 if (!isNaN(parseInt(type))) {
                     console.log(`Processing option ${type} with text "${text}"`);
-                    processOption(type, text, lastNote ? `:::${lastNote}` : '');
+                    processOption(type, text, lastNote);
                     lastNote = '';
                 }
                 break;
