@@ -21,7 +21,6 @@ function parseInput(input) {
                 nodeId++;
                 break;
             case 'block':
-                lastLabel = '';
                 if (inDecisionTree && currentOption) {
                     const optionNodeId = optionNodes[currentOption];
                     console.log(`Connecting option node ${optionNodeId} to block node ${currentNodeId}`);
@@ -34,6 +33,7 @@ function parseInput(input) {
                     lastNodeId = currentNodeId;
                     nodeId++;
                 }
+                lastLabel = ''; // Reset lastLabel after adding a block node
                 break;
             case 'tree':
                 decisionNodeId = currentNodeId;
@@ -42,7 +42,7 @@ function parseInput(input) {
                 lastNodeId = currentNodeId;
                 inDecisionTree = true;
                 currentOption = '';
-                lastLabel = '';
+                lastLabel = ''; // Reset lastLabel after adding a decision node
                 nodeId++;
                 break;
             case 'label':
@@ -58,7 +58,7 @@ function parseInput(input) {
                     if (lastLabel) {
                         console.log(`Adding label "${lastLabel}" between decision node ${decisionNodeId} and option node ${optionNodeId}`);
                         mermaidCode += `${decisionNodeId} -->|${lastLabel}| ${optionNodeId}("${text}")\n`;
-                        lastLabel = '';
+                        lastLabel = ''; // Reset lastLabel after adding an option with a label
                     } else {
                         console.log(`Connecting decision node ${decisionNodeId} to option node ${optionNodeId}`);
                         mermaidCode += `${decisionNodeId} --> ${optionNodeId}("${text}")\n`;
