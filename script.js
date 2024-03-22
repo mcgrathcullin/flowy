@@ -24,9 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     svg.addEventListener('mouseup', handleMouseUp);
                     svg.addEventListener('mouseleave', handleMouseUp);
                     svg.addEventListener('wheel', handlePinchZoom);
-                    svg.addEventListener('touchstart', handleTouchStart);
-                    svg.addEventListener('touchmove', handleTouchMove);
-                    svg.addEventListener('touchend', handleMouseUp);
+                    svg.addEventListener('touchstart', handleTouchStart, { passive: false });
+                    svg.addEventListener('touchmove', handleTouchMove, { passive: false });
+                    svg.addEventListener('touchend', handleTouchEnd);
                     bindFunctions(svg);
             }
         });
