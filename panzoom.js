@@ -10,14 +10,20 @@ export function initPanZoom(svg) {
     svg.addEventListener('pointermove', handlePointerMove);
     svg.addEventListener('pointerup', handlePointerUp);
     svg.addEventListener('pointercancel', handlePointerUp);
+
+    // Test touch support
+    svg.addEventListener('touchstart', function(event) {
+        console.log('Touch event triggered');
+    });
 }
 
 function handlePointerDown(event) {
-    if (event.pointerType === 'touch' && event.isPrimary) {
+    if (event.pointerType === 'touch' && event.isPrimary && event.pointerId === 1) {
         startX = event.clientX;
         startY = event.clientY;
         isPanning = true;
         event.target.setPointerCapture(event.pointerId);
+        console.log('Pointer down');
     }
 }
 
@@ -30,6 +36,7 @@ function handlePointerMove(event) {
         applyTransform(event.target);
         startX = event.clientX;
         startY = event.clientY;
+        console.log('Pointer move');
     }
 }
 
@@ -37,6 +44,7 @@ function handlePointerUp(event) {
     if (event.pointerType === 'touch' && event.isPrimary) {
         isPanning = false;
         event.target.releasePointerCapture(event.pointerId);
+        console.log('Pointer up');
     }
 }
 
