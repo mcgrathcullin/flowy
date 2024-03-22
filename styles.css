@@ -117,6 +117,7 @@ html, body {
     fill: none;
 }
 
+/* New rule to hide empty label boxes */
 .edgeLabel:empty {
     display: none;
 }
