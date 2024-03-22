@@ -40,7 +40,12 @@ export function parseInput(input) {
                     lastNodeId = currentNodeId;
                     nodeId++;
                 } else {
-                    mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                    if (lastLabel) {
+                        mermaidCode += `${lastNodeId} -->|${lastLabel}| ${currentNodeId}("${text}")\n`;
+                        lastLabel = '';
+                    } else {
+                        mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                    }
                     lastNodeId = currentNodeId;
                     nodeId++;
                 }
