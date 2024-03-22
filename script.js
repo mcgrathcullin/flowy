@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 svg.addEventListener('mousemove', handleMouseMove);
                 svg.addEventListener('mouseup', handleMouseUp);
                 svg.addEventListener('mouseleave', handleMouseUp);
-                svg.addEventListener('wheel', handlePinchZoom
+                svg.addEventListener('wheel', handlePinchZoom);
                 bindFunctions(svg);
             }
         });
