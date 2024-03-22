@@ -30,15 +30,10 @@ export function parseInput(input) {
                 break;
             case 'block':
                 console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
-                if (lastLabel) {
-                    console.log(`Adding label "${lastLabel}" between nodes ${lastNodeId} and ${currentNodeId}`);
-                    mermaidCode += `${lastNodeId} -->|${lastLabel}| ${currentNodeId}("${text}")\n`;
-                    lastLabel = '';
-                } else {
-                    mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
-                }
+                mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
                 lastNodeId = currentNodeId;
                 nodeId++;
+                lastLabel = ''; // Reset lastLabel after processing a "Block" node
                 break;
             case 'tree':
                 decisionNodeId = currentNodeId;
