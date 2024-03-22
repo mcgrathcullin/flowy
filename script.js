@@ -1,4 +1,5 @@
 import { parseInput } from './parseinput.js';
+console.log('parseinput.js is loading');
 
 document.addEventListener('DOMContentLoaded', function() {
     mermaid.initialize({ startOnLoad: false });
