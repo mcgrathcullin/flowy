@@ -4,11 +4,29 @@ export function parseInput(input) {
     let nodeId = 1;
     let lastNodeId = '';
     let decisionNodeId = '';
+    let lastLabel = '';
+    const optionNodes = {};
     let inDecisionTree = false;
     let currentOption = '';
+
+    const processOption = (option, text) => {
+        const optionNodeId = `N${nodeId}`;
+        optionNodes[option] = optionNodeId;
+        currentOption = option;
+        nodeId++;
+        if (lastLabel) {
+            mermaidCode += `${decisionNodeId} -->|${lastLabel}| ${optionNodeId}("${text}")\n`;
+            lastLabel = '';
+        } else {
+            mermaidCode += `${decisionNodeId} --> ${optionNodeId}("${text}")\n`;
+        }
+        lastNodeId = optionNodeId;
+    };
+
     for (const line of steps) {
         const [type, text] = line.split(':').map(s => s.trim());
         const currentNodeId = `N${nodeId}`;
+
         switch (type.toLowerCase()) {
             case 'start':
                 mermaidCode += `${currentNodeId}[${text}]\n`;
@@ -16,8 +34,14 @@ export function parseInput(input) {
                 nodeId++;
                 break;
             case 'block':
-                mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
-                lastNodeId = currentNodeId;
+                if (inDecisionTree && currentOption) {
+                    const optionNodeId = optionNodes[currentOption];
+                    mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")\n`;
+                    lastNodeId = currentNodeId;
+                } else {
+                    mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")\n`;
+                    lastNodeId = currentNodeId;
+                }
                 nodeId++;
                 break;
             case 'tree':
@@ -29,19 +53,22 @@ export function parseInput(input) {
                 nodeId++;
                 break;
             case 'label':
-                if (inDecisionTree) {
-                    mermaidCode += `${decisionNodeId} --"${text}"--> ${lastNodeId}\n`;
+                lastLabel = text;
+                if (inDecisionTree && currentOption) {
+                    const optionNodeId = optionNodes[currentOption];
+                    const labelNodeId = `N${nodeId}`;
+                    mermaidCode += `${optionNodeId} -->|"${text}"| ${labelNodeId}\n`;
+                    lastNodeId = labelNodeId;
+                    nodeId++;
                 }
                 break;
             default:
                 if (!isNaN(parseInt(type))) {
-                    const optionNodeId = `N${nodeId}`;
-                    mermaidCode += `${decisionNodeId} ---> ${optionNodeId}("${text}")\n`;
-                    lastNodeId = optionNodeId;
-                    nodeId++;
+                    processOption(type, text);
                 }
                 break;
         }
     }
+
     return mermaidCode;
 }
