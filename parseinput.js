@@ -79,11 +79,3 @@ export function parseInput(input) {
                     console.log(`Processing option ${type} with text "${text}"`);
                     processOption(type, text);
                 }
-                break;
-        }
-
-        console.log(`Updated lastLabel: ${lastLabel}`);
-    }
-
-    return mermaidCode;
-}
