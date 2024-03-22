@@ -1,4 +1,4 @@
-const parseInput = require('./parseinput.js');
+import { parseInput } from './parseinput.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     mermaid.initialize({ startOnLoad: false });
