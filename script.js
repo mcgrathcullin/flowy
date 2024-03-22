@@ -1,10 +1,9 @@
-import { handleMouseDown, handleMouseMove, handlePinchZoom, handleMouseUp } from './panzoom.js';
+import { handleTouchStart, handleTouchMove, handleTouchEnd, handlePinchZoom } from './panzoom.js';
 import { parseInput } from './parseinput.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     mermaid.initialize({ startOnLoad: false });
     mermaid.init(); // Add this line to initialize Mermaid
-
     const textInput = document.getElementById('text-input');
     const flowchartOutput = document.getElementById('flowchart-output');
     const addSampleBtn = document.getElementById('add-sample-btn');
@@ -19,11 +18,12 @@ document.addEventListener('DOMContentLoaded', function() {
             canvasContainer.innerHTML = svgCode;
             const svg = canvasContainer.querySelector('svg');
             if (svg) {
-                svg.addEventListener('mousedown', handleMouseDown);
-                svg.addEventListener('mousemove', handleMouseMove);
-                svg.addEventListener('mouseup', handleMouseUp);
-                svg.addEventListener('mouseleave', handleMouseUp);
-                svg.addEventListener('wheel', handlePinchZoom);
+                svg.addEventListener('touchstart', handleTouchStart);
+                svg.addEventListener('touchmove', handleTouchMove);
+                svg.addEventListener('touchend', handleTouchEnd);
+                svg.addEventListener('touchcancel', handleTouchEnd);
+                svg.addEventListener('gesturestart', handlePinchZoom);
+                svg.addEventListener('gesturechange', handlePinchZoom);
                 bindFunctions(svg);
             }
         });
@@ -32,10 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function centerFlowchart() {
         const containerRect = flowchartOutput.getBoundingClientRect();
         const canvasRect = canvasContainer.getBoundingClientRect();
-
         const scrollLeft = (canvasRect.width - containerRect.width) / 2;
         const scrollTop = (canvasRect.height - containerRect.height) / 2;
-
         flowchartOutput.scrollLeft = scrollLeft;
         flowchartOutput.scrollTop = scrollTop;
     }
@@ -56,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
             "Label: Good\n" +
             "3: Hardware test and wipe\n" +
             "Block: Graded";
-
         textInput.value = sampleText;
         renderFlowchart(sampleText);
         centerFlowchart();
