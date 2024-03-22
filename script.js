@@ -15,6 +15,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let startX, startY;
     let transformX = 0, transformY = 0, scale = 1;
 
+import { parseInput } from './parseinput.js';
+
+document.addEventListener('DOMContentLoaded', function() {
+    // ... (existing code)
+
     function renderFlowchart(input) {
         const steps = input.split('\n');
         const mermaidDefinition = parseInput(input);
@@ -50,6 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+});
 
     function handleMouseDown(event) {
         isPanning = true;
