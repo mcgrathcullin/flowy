@@ -106,6 +106,10 @@ html, body {
     border-radius: 4px;
 }
 
+.edgeLabel:empty {
+  display: none;
+}
+
 .edgeLabel rect {
     fill: transparent;
     stroke: none;
