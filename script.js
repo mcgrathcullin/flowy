@@ -18,16 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
             canvasContainer.innerHTML = svgCode;
             const svg = canvasContainer.querySelector('svg');
-                if (svg) {
-                    svg.addEventListener('mousedown', handleMouseDown);
-                    svg.addEventListener('mousemove', handleMouseMove);
-                    svg.addEventListener('mouseup', handleMouseUp);
-                    svg.addEventListener('mouseleave', handleMouseUp);
-                    svg.addEventListener('wheel', handlePinchZoom);
-                    svg.addEventListener('touchstart', handleTouchStart, { passive: false });
-                    svg.addEventListener('touchmove', handleTouchMove, { passive: false });
-                    svg.addEventListener('touchend', handleTouchEnd);
-                    bindFunctions(svg);
+            if (svg) {
+                svg.addEventListener('mousedown', handleMouseDown);
+                svg.addEventListener('mousemove', handleMouseMove);
+                svg.addEventListener('mouseup', handleMouseUp);
+                svg.addEventListener('mouseleave', handleMouseUp);
+                svg.addEventListener('wheel', handlePinchZoom
+                bindFunctions(svg);
             }
         });
     }
