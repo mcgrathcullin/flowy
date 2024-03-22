@@ -6,45 +6,37 @@ let lastPosY = 0;
 let isPanning = false;
 
 export function initPanZoom(svg) {
-    const hammer = new Hammer(svg);
-    hammer.get('pinch').set({ enable: true });
-    hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL, pointers: 2 });
+    svg.addEventListener('touchstart', handleTouchStart);
+    svg.addEventListener('touchmove', handleTouchMove);
+    svg.addEventListener('touchend', handleTouchEnd);
+}
 
-    hammer.on('panstart', (event) => {
+function handleTouchStart(event) {
+    if (event.touches.length === 2) {
         isPanning = true;
-        lastPosX = event.center.x;
-        lastPosY = event.center.y;
-        svg.style.cursor = 'grabbing';
-    });
+        lastPosX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
+        lastPosY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
+        event.preventDefault();
+    }
+}
 
-    hammer.on('panmove', (event) => {
-        if (!isPanning) return;
-        const deltaX = event.center.x - lastPosX;
-        const deltaY = event.center.y - lastPosY;
-        lastPosX = event.center.x;
-        lastPosY = event.center.y;
+function handleTouchMove(event) {
+    if (isPanning && event.touches.length === 2) {
+        const currentPosX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
+        const currentPosY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
+        const deltaX = currentPosX - lastPosX;
+        const deltaY = currentPosY - lastPosY;
+        lastPosX = currentPosX;
+        lastPosY = currentPosY;
         transformX += deltaX;
         transformY += deltaY;
-        applyTransform(svg);
-    });
+        applyTransform(event.target);
+        event.preventDefault();
+    }
+}
 
-    hammer.on('panend', (event) => {
-        isPanning = false;
-        svg.style.cursor = 'grab';
-    });
-
-    hammer.on('pinchstart', (event) => {
-        svg.style.cursor = 'grab';
-    });
-
-    hammer.on('pinchmove', (event) => {
-        scale *= event.scale;
-        applyTransform(svg);
-    });
-
-    hammer.on('pinchend', (event) => {
-        svg.style.cursor = 'grab';
-    });
+function handleTouchEnd(event) {
+    isPanning = false;
 }
 
 function applyTransform(svg) {
