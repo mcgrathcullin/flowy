@@ -17,7 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderFlowchart(input) {
         const steps = input.split('\n');
+        console.log('Inside renderFlowchart function', input);
         const mermaidDefinition = parseInput(input);
+        console.log('Mermaid definition:', mermaidDefinition);
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
             canvasContainer.innerHTML = svgCode;
             const svg = canvasContainer.querySelector('svg');
@@ -95,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
     textInput.addEventListener('input', () => renderFlowchart(textInput.value));
 
     addSampleBtn.addEventListener('click', () => {
+        console.log('Add sample button clicked');
         const sampleText = "Start: PO Issued\n" +
             "Block: System sends instructions and labels to vendor\n" +
             "Block: Boxes and pallets are labeled\n" +
@@ -110,7 +113,10 @@ document.addEventListener('DOMContentLoaded', function() {
             "3: Hardware test and wipe\n" +
             "Block: Graded";
         textInput.value = sampleText;
+        console.log('Sample text set:', textInput.value);
+        console.log('Rendering flowchart with sample text');
         renderFlowchart(sampleText);
+        console.log('Flowchart rendered');
         centerFlowchart();
     });
 

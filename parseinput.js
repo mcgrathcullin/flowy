@@ -1,4 +1,5 @@
 export function parseInput(input) {
+    console.log('parseInput called with:', input);
     let mermaidCode = 'graph TD;\n';
     const steps = input.split('\n');
     let nodeId = 1;
