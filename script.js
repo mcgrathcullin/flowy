@@ -2,8 +2,24 @@ import { parseInput } from './parseinput.js';
 console.log('parseinput.js is loading');
 
 document.addEventListener('DOMContentLoaded', function() {
-    mermaid.initialize({ startOnLoad: false });
-    mermaid.init();
+    mermaid.initialize({
+        startOnLoad: false,
+        flowchart: {
+            htmlLabels: false,
+            curve: 'linear',
+            useMaxWidth: true,
+            // Add this callback function to customize the rendering
+            onNodeRender: function(id, element, node) {
+                if (node.type === 'arrow_point') {
+                    const label = element.querySelector('.edgeLabel');
+                    if (label && label.textContent.trim() === '') {
+                        label.style.display = 'none';
+                    }
+                }
+            }
+        }
+    });
+
     const textInput = document.getElementById('text-input');
     const flowchartOutput = document.getElementById('flowchart-output');
     const addSampleBtn = document.getElementById('add-sample-btn');
@@ -34,24 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         console.log('Mermaid definition after processing "Note" type:', mermaidDefinition);
-
-        // Customize Mermaid configuration to prevent empty labels
-        mermaid.initialize({
-            flowchart: {
-                htmlLabels: false,
-                curve: 'linear',
-                useMaxWidth: true,
-                // Add this callback function to customize the rendering
-                onNodeRender: function(id, element, node) {
-                    if (node.type === 'arrow_point') {
-                        const label = element.querySelector('.edgeLabel');
-                        if (label && label.textContent.trim() === '') {
-                            label.style.display = 'none';
-                        }
-                    }
-                }
-            }
-        });
 
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
             console.log('Mermaid definition passed to mermaid.render:', mermaidDefinition);
