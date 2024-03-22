@@ -1,5 +1,5 @@
 export function parseInput(input) {
-    let mermaidCode = 'graph TD;';
+    let mermaidCode = 'graph TD;\n';
     const steps = input.split('\n');
     let nodeId = 1;
     let lastNodeId = '';
@@ -10,20 +10,18 @@ export function parseInput(input) {
     let inDecisionTree = false;
     let currentOption = '';
 
-    const processOption = (option, text) => {
+    const processOption = (option, text, note) => {
         const optionNodeId = `N${nodeId}`;
         optionNodes[option] = optionNodeId;
         currentOption = option;
         nodeId++;
         if (lastLabel) {
             console.log(`Adding label "${lastLabel}" between decision node ${decisionNodeId} and option node ${optionNodeId}`);
-            mermaidCode += `${decisionNodeId}-->|${lastLabel}|${optionNodeId}("${text}"):::${lastNote}`; // Remove newline character
+            mermaidCode += `${decisionNodeId} -->|${lastLabel}| ${optionNodeId}("${text}")${note}\n`;
             lastLabel = '';
-            lastNote = '';
         } else {
             console.log(`Connecting decision node ${decisionNodeId} to option node ${optionNodeId}`);
-            mermaidCode += `${decisionNodeId}-->${optionNodeId}("${text}"):::${lastNote}`; // Remove newline character
-            lastNote = '';
+            mermaidCode += `${decisionNodeId} --> ${optionNodeId}("${text}")${note}\n`;
         }
         lastNodeId = optionNodeId;
     };
@@ -31,6 +29,7 @@ export function parseInput(input) {
     for (const line of steps) {
         const [type, text] = line.split(':').map(s => s.trim());
         const currentNodeId = `N${nodeId}`;
+        let note = '';
 
         console.log(`Processing line: ${line}`);
         console.log(`Current lastLabel: ${lastLabel}`);
@@ -39,29 +38,27 @@ export function parseInput(input) {
         switch (type.toLowerCase()) {
             case 'start':
                 console.log(`Adding start node ${currentNodeId} with text "${text}"`);
-                mermaidCode += `${currentNodeId}[${text}]:::${lastNote}`; // Remove newline character
+                mermaidCode += `${currentNodeId}[${text}]${lastNote ? `:::${lastNote}` : ''}\n`;
                 lastNodeId = currentNodeId;
                 lastNote = '';
                 nodeId++;
                 break;
             case 'block':
                 lastLabel = '';
-                lastNote = '';
                 if (inDecisionTree && currentOption) {
                     const optionNodeId = optionNodes[currentOption];
                     console.log(`Connecting option node ${optionNodeId} to block node ${currentNodeId}`);
-                    mermaidCode += `${optionNodeId}-->${currentNodeId}("${text}"):::${lastNote}`; // Remove newline character
+                    mermaidCode += `${optionNodeId} --> ${currentNodeId}("${text}")${lastNote ? `:::${lastNote}` : ''}\n`;
                     lastNodeId = currentNodeId;
+                    lastNote = '';
                     nodeId++;
                 } else {
                     if (lastNote) {
-                        console.log(`Adding note "${lastNote}" to node ${currentNodeId}`);
-                        mermaidCode += `${lastNodeId}-->${currentNodeId}("${text}"):::${lastNote}`; // Remove newline character
+                        note = `:::${lastNote}`;
                         lastNote = '';
-                    } else {
-                        console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
-                        mermaidCode += `${lastNodeId}-->${currentNodeId}("${text}")`;
                     }
+                    console.log(`Connecting nodes ${lastNodeId} and ${currentNodeId}`);
+                    mermaidCode += `${lastNodeId} --> ${currentNodeId}("${text}")${note}\n`;
                     lastNodeId = currentNodeId;
                     nodeId++;
                 }
@@ -69,7 +66,7 @@ export function parseInput(input) {
             case 'tree':
                 decisionNodeId = currentNodeId;
                 console.log(`Adding decision node ${decisionNodeId} with text "${text}"`);
-                mermaidCode += `${lastNodeId}-->${currentNodeId}{${text}}:::${lastNote}`; // Remove newline character
+                mermaidCode += `${lastNodeId} --> ${currentNodeId}{${text}}${lastNote ? `:::${lastNote}` : ''}\n`;
                 lastNodeId = currentNodeId;
                 inDecisionTree = true;
                 currentOption = '';
@@ -88,7 +85,8 @@ export function parseInput(input) {
             default:
                 if (!isNaN(parseInt(type))) {
                     console.log(`Processing option ${type} with text "${text}"`);
-                    processOption(type, text);
+                    processOption(type, text, lastNote ? `:::${lastNote}` : '');
+                    lastNote = '';
                 }
                 break;
         }
