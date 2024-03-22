@@ -116,3 +116,7 @@ html, body {
     stroke-width: 2px;
     fill: none;
 }
+
+.edgeLabel:empty {
+    display: none;
+}
