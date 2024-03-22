@@ -89,3 +89,14 @@ html, body {
     stroke-width: 2px;
     fill: none;
 }
+
+#logo {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 36px;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+    text-align: center;
+    letter-spacing: 2px;
+}
