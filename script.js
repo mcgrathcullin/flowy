@@ -21,6 +21,25 @@ document.addEventListener('DOMContentLoaded', function() {
             canvasContainer.innerHTML = svgCode;
             const svg = canvasContainer.querySelector('svg');
             if (svg) {
+                const nodes = svg.querySelectorAll('.node');
+                nodes.forEach((node, index) => {
+                    const noteText = steps[index + 1]?.trim();
+                    if (noteText && noteText.toLowerCase() === 'note:') {
+                        const note = steps[index + 2]?.trim();
+                        if (note) {
+                            const tooltip = document.createElement('div');
+                            tooltip.classList.add('tooltip');
+                            tooltip.textContent = note;
+                            node.appendChild(tooltip);
+                            node.addEventListener('mouseenter', () => {
+                                tooltip.style.display = 'block';
+                            });
+                            node.addEventListener('mouseleave', () => {
+                                tooltip.style.display = 'none';
+                            });
+                        }
+                    }
+                });
                 svg.addEventListener('mousedown', handleMouseDown);
                 svg.addEventListener('mousemove', handleMouseMove);
                 svg.addEventListener('mouseup', handleMouseUp);
@@ -30,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
 
     function handleMouseDown(event) {
         isPanning = true;
