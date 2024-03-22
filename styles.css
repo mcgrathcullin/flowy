@@ -45,8 +45,6 @@ html, body {
     height: 100%;
     user-select: none;
     transform-origin: top left;
-    transition: transform 0.3s ease-in-out;
-    cursor: grab;
 }
 
 #add-sample-btn, #center-logs-btn {
