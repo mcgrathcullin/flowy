@@ -126,5 +126,6 @@ html, body {
     border-radius: 5px;
     font-size: 12px;
     white-space: pre-wrap;
-    z-index: 1;
+    z-index: 999; /* Increased z-index to ensure tooltips are on top */
+    pointer-events: none; /* Prevent tooltips from capturing mouse events */
 }
