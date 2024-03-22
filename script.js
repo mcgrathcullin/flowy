@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const steps = input.split('\n');
         console.log('Inside renderFlowchart function', input);
         let mermaidDefinition = parseInput(input);
-        console.log('Mermaid definition:', mermaidDefinition);
+        console.log('Mermaid definition after parseInput:', mermaidDefinition);
 
         // Process "Note" type separately
         const noteRegex = /(\w+):\s*Note:\s*(.+)/;
@@ -33,8 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 i--;
             }
         }
+        console.log('Mermaid definition after processing "Note" type:', mermaidDefinition);
 
         mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
+            console.log('Mermaid definition passed to mermaid.render:', mermaidDefinition);
             canvasContainer.innerHTML = svgCode;
             const svg = canvasContainer.querySelector('svg');
             if (svg) {
