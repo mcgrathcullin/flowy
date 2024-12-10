@@ -1,29 +1,35 @@
-import { parseInput } from './parseinput.js';
-console.log('parseinput.js is loading');
+import { parseInput } from './src/flowchart/index.js';
+import { enhanceTextInput } from './src/flowchart/ui/input-enhancer.js';
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Mermaid
     mermaid.initialize({
         startOnLoad: false,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#1a1e24',
+            primaryTextColor: '#c9d1d9',
+            primaryBorderColor: '#30363d',
+            lineColor: '#30363d',
+            secondaryColor: '#161b22',
+            tertiaryColor: '#161b22'
+        },
         flowchart: {
-            htmlLabels: false,
-            curve: 'linear',
-            useMaxWidth: true,
-            // Add this callback function to customize the rendering
-            onNodeRender: function(id, element, node) {
-                if (node.type === 'arrow_point') {
-                    const label = element.querySelector('.edgeLabel');
-                    if (label && label.textContent.trim() === '') {
-                        label.style.display = 'none';
-                    }
-                }
-            }
-        }
+            htmlLabels: true,
+            curve: 'basis',
+            padding: 15
+        },
+        securityLevel: 'loose'
     });
 
     const textInput = document.getElementById('text-input');
     const flowchartOutput = document.getElementById('flowchart-output');
     const addSampleBtn = document.getElementById('add-sample-btn');
     const centerLogsBtn = document.getElementById('center-logs-btn');
+    const helpBtn = document.getElementById('help-btn');
+    const helpModal = document.getElementById('help-modal');
+    const closeBtn = document.querySelector('.close');
+    
     const canvasContainer = document.createElement('div');
     canvasContainer.classList.add('canvas-container');
     flowchartOutput.appendChild(canvasContainer);
@@ -31,107 +37,207 @@ document.addEventListener('DOMContentLoaded', function() {
     let isPanning = false;
     let startX, startY;
     let transformX = 0, transformY = 0, scale = 1;
-
+    let isVertical = true;
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsModal = document.getElementById('settings-modal');
+    const directionToggle = document.getElementById('direction-toggle');
+    const saveFlowchartBtn = document.getElementById('save-flowchart');
+    
     function renderFlowchart(input) {
-        const steps = input.split('\n');
-        console.log('Inside renderFlowchart function', input);
-        let mermaidDefinition = parseInput(input);
-        console.log('Mermaid definition after parseInput:', mermaidDefinition);
-
-        // Process "Note" type separately
-        const noteRegex = /(\w+):\s*Note:\s*(.+)/;
-        for (let i = 0; i < steps.length; i++) {
-            const match = steps[i].match(noteRegex);
-            if (match) {
-                const [, nodeId, noteText] = match;
-                mermaidDefinition += `Note over N${nodeId}: ${noteText}\n`;
-                steps.splice(i, 1);
-                i--;
-            }
+        try {
+            const mermaidDefinition = parseInput(input, isVertical);
+            console.log('Generated Mermaid code:', mermaidDefinition);
+            
+            // Store current transform state
+            const currentSvg = canvasContainer.querySelector('svg');
+            const currentTransform = currentSvg ? currentSvg.style.transform : '';
+            
+            // Clear previous content
+            canvasContainer.innerHTML = '';
+            
+            // Create a new container for this render
+            const container = document.createElement('div');
+            container.className = 'mermaid';
+            container.textContent = mermaidDefinition;
+            canvasContainer.appendChild(container);
+            
+            // Render the new diagram
+            mermaid.render('graphDiv', mermaidDefinition).then(({svg, bindFunctions}) => {
+                canvasContainer.innerHTML = svg;
+                
+                // Add event listeners to the new SVG
+                const svgElement = canvasContainer.querySelector('svg');
+                if (svgElement) {
+                    svgElement.style.width = '100%';
+                    svgElement.style.height = '100%';
+                    
+                    // Restore previous transform if it exists
+                    if (currentTransform) {
+                        svgElement.style.transform = currentTransform;
+                    }
+                    
+                    svgElement.addEventListener('mousedown', handleMouseDown);
+                    svgElement.addEventListener('mousemove', handleMouseMove);
+                    svgElement.addEventListener('mouseup', handleMouseUp);
+                    svgElement.addEventListener('mouseleave', handleMouseUp);
+                    svgElement.addEventListener('wheel', handleWheel);
+                }
+                
+                if (bindFunctions) bindFunctions(svgElement);
+            }).catch(err => {
+                console.error('Error rendering:', err);
+                canvasContainer.innerHTML = `<div class="error">Error rendering flowchart: ${err.message}</div>`;
+            });
+        } catch (error) {
+            console.error('Error parsing input:', error);
+            canvasContainer.innerHTML = `<div class="error">Error parsing input: ${error.message}</div>`;
         }
-        console.log('Mermaid definition after processing "Note" type:', mermaidDefinition);
-
-        mermaid.render('theGraph', mermaidDefinition, function (svgCode, bindFunctions) {
-            console.log('Mermaid definition passed to mermaid.render:', mermaidDefinition);
-            canvasContainer.innerHTML = svgCode;
-            const svg = canvasContainer.querySelector('svg');
-            if (svg) {
-                svg.addEventListener('mousedown', handleMouseDown);
-                svg.addEventListener('mousemove', handleMouseMove);
-                svg.addEventListener('mouseup', handleMouseUp);
-                svg.addEventListener('mouseleave', handleMouseUp);
-                svg.addEventListener('wheel', handleWheel);
-                bindFunctions(svg);
-            }
-        });
     }
 
     function handleMouseDown(event) {
         isPanning = true;
-        startX = event.clientX;
-        startY = event.clientY;
+        startX = event.clientX - transformX;
+        startY = event.clientY - transformY;
+        event.preventDefault();
     }
 
     function handleMouseMove(event) {
         if (!isPanning) return;
-        const deltaX = event.clientX - startX;
-        const deltaY = event.clientY - startY;
-        transformX += deltaX;
-        transformY += deltaY;
+        transformX = event.clientX - startX;
+        transformY = event.clientY - startY;
         applyTransform();
-        startX = event.clientX;
-        startY = event.clientY;
+        event.preventDefault();
     }
 
-    function handleMouseUp() {
+    function handleMouseUp(event) {
         isPanning = false;
+        event.preventDefault();
     }
 
     function handleWheel(event) {
-        const delta = event.deltaY < 0 ? 1.1 : 0.9;
-        scale *= delta;
+        const delta = -event.deltaY;
+        const scaleChange = delta > 0 ? 1.1 : 0.9;
+        
+        // Get mouse position relative to the container
+        const rect = canvasContainer.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        
+        // Calculate new scale
+        const newScale = scale * scaleChange;
+        if (newScale < 0.1 || newScale > 10) return;
+        
+        // Calculate new transform to zoom toward mouse position
+        transformX = mouseX - (mouseX - transformX) * scaleChange;
+        transformY = mouseY - (mouseY - transformY) * scaleChange;
+        scale = newScale;
+        
         applyTransform();
         event.preventDefault();
     }
 
     function applyTransform() {
-        canvasContainer.style.transform = `translate(${transformX}px, ${transformY}px) scale(${scale})`;
+        const svg = canvasContainer.querySelector('svg');
+        if (svg) {
+            svg.style.transform = `translate(${transformX}px, ${transformY}px) scale(${scale})`;
+        }
     }
 
     function centerFlowchart() {
-        const containerRect = flowchartOutput.getBoundingClientRect();
-        const canvasRect = canvasContainer.getBoundingClientRect();
-        const scrollLeft = (canvasRect.width - containerRect.width) / 2;
-        const scrollTop = (canvasRect.height - containerRect.height) / 2;
-        flowchartOutput.scrollLeft = scrollLeft;
-        flowchartOutput.scrollTop = scrollTop;
+        transformX = 0;
+        transformY = 0;
+        scale = 1;
+        applyTransform();
     }
 
-    textInput.addEventListener('input', () => renderFlowchart(textInput.value));
+    // Debounce the input to prevent too frequent updates
+    let debounceTimeout;
+    textInput.addEventListener('input', function() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            const input = textInput.value;
+            if (input.trim()) {
+                renderFlowchart(input);
+            }
+        }, 300);
+    });
 
+    // Initialize the enhancer
+    const enhancer = enhanceTextInput(textInput);
+
+    // Add sample button handler
     addSampleBtn.addEventListener('click', () => {
-        console.log('Add sample button clicked');
-        const sampleText = "Start: PO Issued\n" +
-            "Block: System sends instructions and labels to vendor\n" +
-            "Note: Test\n" +
-            "Block: Boxes and pallets are labeled\n" +
-            "Block: Boxes and pallets are counted. Pictures are taken.\n" +
-            "Block: Power on and check status\n" +
-            "Tree: Status\n" +
-            "Label: Real bad\n" +
-            "1: Scrap for parts\n" +
-            "Label: Bad\n" +
-            "2: Clean device\n" +
-            "Label: Good\n" +
-            "3: Hardware test and wipe\n" +
-            "Block: Graded";
+        const sampleText = [
+            "Start: Begin Process",
+            "Block: Receive Package",
+            ">Note: Check for damage",
+            ">Block: Scan Barcode",
+            "Tree: Quality Check",
+            ">Label: Pass",
+            ">>1: Move to Storage",
+            ">Label: Minor Issues",
+            ">>2: Repair Item",
+            ">Label: Major Issues",
+            ">>3: Return to Sender",
+            "Block: Update System"
+        ].join('\n');
+
         textInput.value = sampleText;
-        console.log('Sample text set:', textInput.value);
-        console.log('Rendering flowchart with sample text');
+        enhancer.updateStyles(); // Explicitly update styles
         renderFlowchart(sampleText);
-        console.log('Flowchart rendered');
-        centerFlowchart();
     });
 
     centerLogsBtn.addEventListener('click', centerFlowchart);
+
+    helpBtn.addEventListener('click', () => {
+        helpModal.classList.add('show');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        helpModal.classList.remove('show');
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === helpModal) {
+            helpModal.classList.remove('show');
+        }
+    });
+
+    // Prevent scrolling of background when modal is open
+    helpModal.addEventListener('wheel', (e) => {
+        e.stopPropagation();
+    });
+
+    // Settings modal controls
+    settingsBtn.addEventListener('click', () => {
+        settingsModal.classList.add('show');
+    });
+
+    // Close button for settings modal
+    settingsModal.querySelector('.close').addEventListener('click', () => {
+        settingsModal.classList.remove('show');
+    });
+
+    // Direction toggle
+    directionToggle.addEventListener('click', () => {
+        isVertical = !isVertical;
+        directionToggle.innerHTML = isVertical ? '↕️ Vertical' : '↔️ Horizontal';
+        directionToggle.classList.toggle('active');
+        const input = textInput.value;
+        if (input.trim()) {
+            renderFlowchart(input);
+        }
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === settingsModal) {
+            settingsModal.classList.remove('show');
+        }
+    });
+
+    // Prevent scrolling of background when modal is open
+    settingsModal.addEventListener('wheel', (e) => {
+        e.stopPropagation();
+    });
 });

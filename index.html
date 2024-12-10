@@ -5,17 +5,99 @@
   <title>Flowy</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <script type="module" src="script.js"></script>
 </head>
 <body>
   <div id="text-input-area">
     <div id="logo">FLOWY</div>
     <textarea id="text-input"></textarea>
-    <button id="add-sample-btn" style="margin-top: 20px;">Add sample</button>
-    <button id="center-logs-btn" style="margin-top: 20px;">Center</button>
+    <div class="button-group">
+        <button id="add-sample-btn" class="action-button">
+            <span class="button-icon">＋</span>
+            Add Sample
+        </button>
+        <button id="center-logs-btn" class="action-button">
+            <span class="button-icon">◎</span>
+            Center
+        </button>
+        <button id="settings-btn" class="action-button">
+            <span class="button-icon">⚙</span>
+            Settings
+        </button>
+        <button id="help-btn" class="action-button help">
+            <span class="button-icon">？</span>
+            Help Guide
+        </button>
+    </div>
+  </div>
+  <div id="help-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Flowy Guide</h2>
+      <div class="guide-content">
+        <section>
+          <h3>Basic Syntax</h3>
+          <pre><code>Type: Text</code></pre>
+          <p>Example: Start: Begin Process</p>
+        </section>
+        
+        <section>
+          <h3>Node Types</h3>
+          <ul>
+            <li><strong>Start:</strong> Beginning of the flow</li>
+            <li><strong>Block:</strong> Process or action step</li>
+            <li><strong>Tree:</strong> Decision point</li>
+            <li><strong>Note:</strong> Additional information</li>
+            <li><strong>Label:</strong> Decision outcome</li>
+            <li><strong>Number:</strong> Branch destination (1:, 2:, etc.)</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h3>Indentation</h3>
+          <p>Use > to create hierarchy:</p>
+          <pre><code>Block: Parent
+>Block: Child
+>>Block: Grandchild</code></pre>
+        </section>
+        
+        <section>
+          <h3>Decision Trees</h3>
+          <pre><code>Tree: Quality Check
+>Label: Pass
+>>1: Move to Storage
+>Label: Fail
+>>2: Return Item</code></pre>
+        </section>
+      </div>
+    </div>
   </div>
   <div id="flowchart-output">
     <!-- Flowchart will be rendered here -->
+  </div>
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Settings</h2>
+        <div class="settings-content">
+            <div class="setting-item">
+                <label>Flowchart Direction</label>
+                <button id="direction-toggle" class="icon-button" title="Toggle Direction">
+                    ↕️ Vertical
+                </button>
+            </div>
+            <div class="setting-item">
+                <label>Export</label>
+                <button id="save-flowchart" class="icon-button" disabled title="Coming Soon">
+                    💾 Save Flowchart
+                </button>
+            </div>
+            <div class="credit-line">
+                Made with ❤️ by <a href="http://www.cullinm.com" target="_blank">Cullin</a>
+            </div>
+        </div>
+    </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom/dist/panzoom.min.js"></script>
